@@ -25,7 +25,6 @@ def runForever(port: int) -> None:
             header.extend(chunk)
 
         request = Request.fromBytes(header) # parse request
-        print(request)
         if "Content-Length" in request.headers:
 
             while len(request.body) < int(request.headers["Content-Length"]):
@@ -40,7 +39,7 @@ def runForever(port: int) -> None:
                     request.body.extend(chunk)
                 else:
                     break
-        
+
         path = "." + request.pathname
         if os.path.exists(path):
             if path.endswith(".html") or path.endswith(".htm"):
