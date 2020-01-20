@@ -26,7 +26,21 @@ class Request:
         self.protocol: str = protocol # http:
         self.hostname: str = hostname # somewebsite.com (no port)
         self.port: int = port # 8080
-        self.pathname: str = pathname # /path/page.html
+
+        if "?" not in pathname:
+            self.pathname: str = pathname # /path/page.html, no query string
+            self.params: Dict[str, str] = {} # ?a=b&c=d
+        else:
+            self.pathname, search = pathname.split("?")
+            self.params: Dict[str, str] = {}
+
+            for entry in search.split("&"):
+                if "=" in entry:
+                    k, v, *_ = entry.split("=")
+                else:
+                    k, v = entry, None
+                self.params[k] = v
+            
         self.method: str = method # GET
         self.headers: Dict[str, Any] = headers or {}
         self.body: SupportsBytes = body or bytearray()
@@ -70,6 +84,7 @@ class Request:
 class Response:
     codeMessageMapping = {
         200: "OK",
+        400: "Bad Request",
         404: "Not Found",
         403: "Forbidden",
     } # HTTP status code to message
