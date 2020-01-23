@@ -62,7 +62,11 @@ if __name__ == "__main__":
             exit(1) # should return a non-zero exit code
         else:
             if "text/html" in response.headers["Content-Type"]: # some sites put "charset" in "Content-Type"
-                print(response.body.decode("utf8"))
+                if "charset" in response.headers["Content-Type"]:
+                    charset = response.headers["Content-Type"].split(";")[1].split("=")[1]
+                else:
+                    charset = "utf8"
+                print(response.body.decode(charset))
                 exit(0) # Your program should return a unix exit code of 0 on success
             else:
                 raise Exception("Content type not understood: Content-Type is not text/html")
