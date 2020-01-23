@@ -82,5 +82,7 @@ if __name__ == "__main__":
                 exit(0) # Your program should return a unix exit code of 0 on success
             else:
                 print("Content type not understood: Content-Type is not text/html", file=sys.stderr)
+                exit(1)
 
     print("Too many redirects", file=sys.stderr) # give up after 10 redirects
+    exit(1)
