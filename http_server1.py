@@ -19,7 +19,7 @@ def runForever(port):
 
         header = bytearray()
 
-        while not header.endswith(b"\r\n" * 2):
+        while not header.endswith(b"\r\n" * 2): # read the header only
             chunk = connection.recv(1)
             header.extend(chunk)
 
@@ -37,6 +37,7 @@ def runForever(port):
             response = Response(404, body=b"<h1>404 Not Found</h1>")
 
         connection.sendall(bytes(response))
+        print("{} {} {}".format(request.method, request.pathname, response.statusCode))
         connection.close()
 
 helpMessage = "Usage: python3 http_server1.py [port]"

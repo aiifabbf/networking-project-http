@@ -65,6 +65,7 @@ def runForever(port):
                             response = Response(403, body=b"HTTP request is invalid: <pre>" + readers[readable]["header"] + b"</pre>")
                             readable.sendall(bytes(response))
                             readable.close()
+                            print("{} {} {}".format(request.method, request.pathname, response.statusCode))
                             readers.pop(readable)
                             continue
 
@@ -72,6 +73,7 @@ def runForever(port):
                             response = staticFile(request.pathname) # generate response
                             readable.sendall(bytes(response)) # serve response
                             readable.close()
+                            print("{} {} {}".format(request.method, request.pathname, response.statusCode))
                             del readers[readable]
                         else: # need to read the whole request body
                             readers[readable]["state"] = "body"
@@ -88,6 +90,7 @@ def runForever(port):
                         response = staticFile(request.pathname)
                         readable.sendall(bytes(response))
                         readable.close()
+                        print("{} {} {}".format(request.method, request.pathname, response.statusCode))
                         readers.pop(readable)
                     else:
                         continue
