@@ -117,3 +117,23 @@ class Response:
         header = "\n".join(": ".join(map(str, v)) for v in self.headers.items()) # genereate header
         message = "\n".join([statusLine, header]) + "\n" * 2 # concatenate response message header
         return message + "[{} bytes body]".format(len(self.body))
+
+    @property
+    def text(self):
+        if "text/html" in self.headers["Content-Type"]: # some sites put "charset" in "Content-Type"
+            if "charset" in self.headers["Content-Type"]:
+                segments = [v.strip() for v in self.headers["Content-Type"].split(";")]
+                
+                for v in segments:
+                    if v.startswith("charset"):
+                        charset = v.split("=")[1]
+                        break
+                else:
+                    charset = "utf8"
+
+            else:
+                charset = "utf8" # default to utf8
+        else:
+            charset = "utf8"
+
+        return self.body.decode(charset)

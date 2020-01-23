@@ -62,24 +62,12 @@ if __name__ == "__main__":
             print("Redirected to: {}".format(url), file=sys.stderr) # Your client should also print a message to stderr explaining what happened
             depth += 1
         elif response.statusCode >= 400: # >= 400
-            print(response.body.decode("utf8")) # but also print the response body
+            print(response.text) # but also print the response body
             exit(1) # should return a non-zero exit code
         else:
             if "text/html" in response.headers["Content-Type"]: # some sites put "charset" in "Content-Type"
-                if "charset" in response.headers["Content-Type"]:
-                    segments = [v.strip() for v in response.headers["Content-Type"].split(";")]
-                    
-                    for v in segments:
-                        if v.startswith("charset"):
-                            charset = v.split("=")[1]
-                            break
-                    else:
-                        charset = "utf8"
-
-                else:
-                    charset = "utf8"
-                print(response.body.decode(charset))
-                exit(0) # Your program should return a unix exit code of 0 on success
+                print(response.text) # Your program should return a unix exit code of 0 on success
+                exit(0)
             else:
                 print("Content type not understood: Content-Type is not text/html", file=sys.stderr)
                 exit(1)
