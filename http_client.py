@@ -4,7 +4,7 @@ import socket
 
 from util import Request, Response
 
-def get(url: str, headers: Dict[str, Any]=None) -> Tuple[int, Dict[str, str], bytearray]:
+def get(url, headers=None):
     """Naive GET, does not handle any error or redirect"""
     request = Request(url) # Your client must include a "Host: " header
     ip = socket.gethostbyname(request.hostname)
@@ -17,7 +17,7 @@ def get(url: str, headers: Dict[str, Any]=None) -> Tuple[int, Dict[str, str], by
     header = bytearray()
 
     while not header.endswith(b"\r\n" * 2):
-        chunk: bytes = sock.recv(1)
+        chunk = sock.recv(1)
         header.extend(chunk)
 
     response = Response.fromBytes(header) # construct response from header
@@ -25,13 +25,13 @@ def get(url: str, headers: Dict[str, Any]=None) -> Tuple[int, Dict[str, str], by
         contentLength = int(response.headers["Content-Length"]) # get Content-Length field. If none, no body
 
         while len(response.body) < contentLength: # keep reading body until reaching Content-Length
-            chunk: bytes = sock.recv(4096)
+            chunk = sock.recv(4096)
             response.body.extend(chunk)
 
     else: # if there is no Content-Length field in header, then assume server would close the stream when finishing
 
         while True: # keep reading until stream is closed
-            chunk: bytes = sock.recv(4096)
+            chunk = sock.recv(4096)
             if chunk: # stream has been closed
                 response.body.extend(chunk)
             else:
@@ -50,7 +50,12 @@ if __name__ == "__main__":
     depth = 0
 
     while depth <= 10:
-        response = get(url)
+        try:
+            response = get(url)
+        except:
+            print("Invalid protocol: only HTTP is currently supported")
+            exit(1)
+
         if response.statusCode in {301, 302}: # redirect
             url = response.headers.get("Location", None) # new url
             if not url:
@@ -63,12 +68,20 @@ if __name__ == "__main__":
         else:
             if "text/html" in response.headers["Content-Type"]: # some sites put "charset" in "Content-Type"
                 if "charset" in response.headers["Content-Type"]:
-                    charset = response.headers["Content-Type"].split(";")[1].split("=")[1]
+                    segments = [v.strip() for v in response.headers["Content-Type"].split(";")]
+                    
+                    for v in segments:
+                        if v.startswith("charset"):
+                            charset = v.split("=")[1]
+                            break
+                    else:
+                        charset = "utf8"
+
                 else:
                     charset = "utf8"
                 print(response.body.decode(charset))
                 exit(0) # Your program should return a unix exit code of 0 on success
             else:
-                raise Exception("Content type not understood: Content-Type is not text/html")
+                print("Content type not understood: Content-Type is not text/html", file=sys.stderr)
 
-    raise Exception("Too many redirects") # give up after 10 redirects
+    print("Too many redirects", file=sys.stderr) # give up after 10 redirects

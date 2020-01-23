@@ -5,7 +5,7 @@ import os
 
 from util import Request, Response
 
-def runForever(port: int) -> None:
+def runForever(port):
     sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) # according to <https://docs.python.org/3/library/socket.html#socket.AF_INET>
     sock.bind(("", port))
     sock.listen(5)
@@ -21,20 +21,20 @@ def runForever(port: int) -> None:
         header = bytearray()
 
         while not header.endswith(b"\r\n" * 2):
-            chunk: bytes = connection.recv(1)
+            chunk = connection.recv(1)
             header.extend(chunk)
 
         request = Request.fromBytes(header) # parse request
         if "Content-Length" in request.headers:
 
             while len(request.body) < int(request.headers["Content-Length"]):
-                chunk: bytes = connection.recv(4096)
+                chunk = connection.recv(4096)
                 request.body.extend(chunk)
 
         else:
 
             while True:
-                chunk: bytes = connection.recv(4096)
+                chunk = connection.recv(4096)
                 if chunk:
                     request.body.extend(chunk)
                 else:

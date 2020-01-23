@@ -9,7 +9,7 @@ from util import Request, Response
 import traceback
 
 # Safely serve a local file. Reject any file in ancestor directories
-def staticFile(pathname: str, base: str=".") -> Response:
+def staticFile(pathname, base=".") -> Response:
     base = os.path.abspath(base)
     path = os.path.join(base, pathname[1: ])
 
@@ -28,7 +28,7 @@ def staticFile(pathname: str, base: str=".") -> Response:
 
     return response
 
-def runForever(port: int) -> None:
+def runForever(port):
     sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) # according to <https://docs.python.org/3/library/socket.html#socket.AF_INET>
     sock.bind(("", port))
     sock.listen(5)
