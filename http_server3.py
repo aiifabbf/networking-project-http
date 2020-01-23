@@ -3,7 +3,7 @@ import sys
 import os
 import json
 import traceback
-import functools
+from functools import reduce
 
 from util import Request, Response
 
