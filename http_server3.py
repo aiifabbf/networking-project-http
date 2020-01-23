@@ -58,7 +58,7 @@ def runOnce(sock: socket.socket) -> None:
             response = Response(400, body=b"400 Bad Request")
         else:
             try:
-                operands = list(map(float, request.params.values()))
+                operands = list(map(float, request.params.values())) # this could fail
                 result = reduce(lambda x, y: x * y, operands)
                 body = {
                     "operation": "product",
@@ -66,7 +66,7 @@ def runOnce(sock: socket.socket) -> None:
                     "result": result
                 }
                 response = Response(200, headers=headers, body=bytes(json.dumps(body, indent=4), "utf8"))
-            except ValueError:
+            except:
                 response = Response(400, body=b"400 Bad Request")
 
         connection.sendall(bytes(response))

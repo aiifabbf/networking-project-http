@@ -32,13 +32,14 @@ class Request:
         else:
             self.pathname, search = pathname.split("?")
             self.params = {}
+            if search: # to handle edge cases like /product?
 
-            for entry in search.split("&"):
-                if "=" in entry:
-                    k, v, *_ = entry.split("=")
-                else:
-                    k, v = entry, None
-                self.params[k] = v
+                for entry in search.split("&"):
+                    if "=" in entry:
+                        k, v, *_ = entry.split("=")
+                    else:
+                        k, v = entry, None
+                    self.params[k] = v
             
         self.method = method # GET
         self.headers = headers or {}
