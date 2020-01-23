@@ -1,4 +1,3 @@
-from typing import *
 import socket
 import sys
 import os

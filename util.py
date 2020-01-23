@@ -1,7 +1,6 @@
 """
 Some helper classes to ease constructing request and response bytes
 """
-from typing import *
 
 class Request:
     def __init__(self, url, method="GET", headers=None, body=None, version="HTTP/1.0"):
