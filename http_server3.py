@@ -3,6 +3,7 @@ import sys
 import os
 import json
 import traceback
+import functools
 
 from util import Request, Response
 
@@ -58,7 +59,7 @@ def runOnce(sock: socket.socket) -> None:
         else:
             try:
                 operands = list(map(float, request.params.values()))
-                result = sum(operands)
+                result = reduce(lambda x, y: x * y, operands)
                 body = {
                     "operation": "product",
                     "operands": operands,
