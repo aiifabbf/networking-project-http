@@ -70,6 +70,7 @@ def runOnce(sock: socket.socket) -> None:
 
         connection.sendall(bytes(response))
         connection.close()
+        print("{} {} {}".format(request.method, request.url, response.statusCode))
 
 helpMessage = "Usage: python3 http_server3.py [port]"
 
