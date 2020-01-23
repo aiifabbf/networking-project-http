@@ -62,7 +62,7 @@ class Request:
         return Request("http://" + headers["Host"] + pathname, method, headers, body, version)
 
     def __bytes__(self): # construct the request bytes from Request object
-        requestLine: str = "{} {} {}".format(self.method, self.pathname, self.version)
+        requestLine = "{} {} {}".format(self.method, self.pathname, self.version)
         self.headers.update({
             "Host": self.host
         }) # Your client must include a "Host: " header
