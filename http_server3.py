@@ -65,7 +65,7 @@ def runOnce(sock: socket.socket) -> None:
                     "operands": operands,
                     "result": result
                 }
-                response = Response(200, headers=headers, body=bytes(json.dumps(body), "utf8"))
+                response = Response(200, headers=headers, body=bytes(json.dumps(body, indent=4), "utf8"))
             except ValueError:
                 response = Response(400, body=b"400 Bad Request")
 

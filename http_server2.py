@@ -11,19 +11,22 @@ import traceback
 def staticFile(pathname, base=".") -> Response:
     base = os.path.abspath(base)
     path = os.path.join(base, pathname[1: ])
+    headers = {
+        "Content-Type": "text/html",
+    }
 
     if not path.startswith(base): # unsafe! if absolute path of the requested file does not start with base, then it is requesting something like /../../../../boot/vmlinuz
-        return Response(403, body=b"<h1>403 Forbidden</h1>")
+        return Response(403, body=b"<h1>403 Forbidden</h1>", headers=headers)
 
     if os.path.exists(path):
         if path.endswith(".html") or path.endswith(".htm"):
-            response = Response(200, headers={"Content-Type": "text/html"})
+            response = Response(200, headers=headers)
             with open(os.path.join(".", path), "rb") as f:
                 response.body.extend(f.read())
         else:
-            response = Response(403, body=b"<h1>403 Forbidden</h1>")
+            response = Response(403, body=b"<h1>403 Forbidden</h1>", headers=headers)
     else:
-        response = Response(404, body=b"<h1>404 Not Found</h1>")
+        response = Response(404, body=b"<h1>404 Not Found</h1>", headers=headers)
 
     return response
 
