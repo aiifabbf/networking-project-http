@@ -24,20 +24,6 @@ def runForever(port):
             header.extend(chunk)
 
         request = Request.fromBytes(header) # parse request
-        if "Content-Length" in request.headers:
-
-            while len(request.body) < int(request.headers["Content-Length"]):
-                chunk = connection.recv(4096)
-                request.body.extend(chunk)
-
-        else:
-
-            while True:
-                chunk = connection.recv(4096)
-                if chunk:
-                    request.body.extend(chunk)
-                else:
-                    break
 
         path = "." + request.pathname
         if os.path.exists(path):
